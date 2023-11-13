@@ -1,6 +1,7 @@
 package br.com.cleonildo.entities;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Document
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
 public class Patient {
 
@@ -25,6 +27,7 @@ public class Patient {
     private Address address;
     @Setter(AccessLevel.NONE)
     private List<String> phones;
+    @Setter(AccessLevel.NONE)
     private List<String> symptoms;
 
     public Patient(String firstName, String lastName, Address address, List<String> phones, List<String> symptoms) {
@@ -34,4 +37,13 @@ public class Patient {
         this.phones = phones;
         this.symptoms = symptoms;
     }
+
+    public void addPhones(String phones){
+        this.phones.add(phones);
+    }
+
+    public void addSymptom(String symptom){
+        this.symptoms.add(symptom);
+    }
+
 }
