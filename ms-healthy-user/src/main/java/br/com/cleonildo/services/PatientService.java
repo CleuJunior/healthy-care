@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,13 +40,14 @@ public class PatientService {
     }
 
     public PatientResponse findByFirstNameAndLastName(String firsName, String lastName) {
-        var patientOptional = this.repository.findByFirstNameAndLastName(firsName, lastName).get();
+        var patientOptional = this.repository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firsName, lastName).get();
 
         LOGGER.info("Patient found");
 
         return new PatientResponse(patientOptional);
     }
 
+    @Transactional
     public PatientResponse savePatient(PatientRequest request) {
         var patient = Patient
                 .builder()
@@ -62,6 +64,7 @@ public class PatientService {
         return new PatientResponse(patientResponse);
     }
 
+    @Transactional
     public PatientResponse updatePatient(ObjectId objectId, PatientRequest request) {
         var patient = this.repository.findById(objectId).get();
 
@@ -77,6 +80,7 @@ public class PatientService {
         return new PatientResponse(patient);
     }
 
+    @Transactional
     public void deletePatientById(ObjectId objectId) {
         var patient = this.repository.findById(objectId).get();
 

@@ -2,12 +2,15 @@ package databuilder;
 
 import br.com.cleonildo.entities.Address;
 import br.com.cleonildo.entities.Patient;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PatientBuilder {
 
     private ObjectId id;
@@ -17,9 +20,6 @@ public class PatientBuilder {
     private Address address;
     private List<String> phones = new ArrayList<>();
     private List<String> symptoms = new ArrayList<>();
-
-    private PatientBuilder() {
-    }
 
     public static PatientBuilder create() {
         return new PatientBuilder();

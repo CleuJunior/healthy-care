@@ -85,7 +85,7 @@ class PatientServiceTest {
     @Test
     @DisplayName("Return patient by First and Last name")
     void shouldReturnPatient_WhenCallingFindByFirstNameAndLastName() {
-        given(repository.findByFirstNameAndLastName(anyString(), anyString())).willReturn(Optional.of(patient));
+        given(repository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(anyString(), anyString())).willReturn(Optional.of(patient));
 
         var patientResponse = this.service.findByFirstNameAndLastName(FIRST_NAME, LAST_NAME);
 
