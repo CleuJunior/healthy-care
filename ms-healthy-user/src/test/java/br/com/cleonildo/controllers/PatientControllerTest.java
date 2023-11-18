@@ -2,12 +2,9 @@ package br.com.cleonildo.controllers;
 
 import br.com.cleonildo.dto.PatientRequest;
 import br.com.cleonildo.dto.PatientResponse;
-import br.com.cleonildo.entities.Address;
 import br.com.cleonildo.services.PatientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import databuilder.PatientRequestBuilder;
-import databuilder.PatientResponseBuilder;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import static factory.PatientRequestFactory.buildPatientRequest;
+import static factory.PatientResponseBuilder.buildPatientResponse;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PatientControllerTest {
     private static final String URL = "/api/v1/patients";
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    public static final String ADDRESS_JSON = "{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}";
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -52,16 +47,7 @@ class PatientControllerTest {
 
     @BeforeEach
     void setup() {
-        this.response = PatientResponseBuilder
-                .create()
-                .withId()
-                .withFirstName()
-                .withLastName()
-                .withAge()
-                .withAddress()
-                .withPhone()
-                .withSymptom()
-                .build();
+        this.response = buildPatientResponse();
     }
 
     @Test
@@ -79,7 +65,7 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value("Anna"))
                 .andExpect(jsonPath("$[0].lastName").value("Vitoria"))
                 .andExpect(jsonPath("$[0].age").value("24"))
-                .andExpect(content().json("[" + ADDRESS_JSON + "]"))
+                .andExpect(content().json("[{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}]"))
                 .andExpect(jsonPath("$[0].phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
                 .andExpect(jsonPath("$[0].symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
                 .andDo(print());
@@ -104,7 +90,7 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$.firstName").value("Anna"))
                 .andExpect(jsonPath("$.lastName").value("Vitoria"))
                 .andExpect(jsonPath("$.age").value("24"))
-                .andExpect(content().json(ADDRESS_JSON))
+                .andExpect(content().json("{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}"))
                 .andExpect(jsonPath("$.phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
                 .andExpect(jsonPath("$.symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
                 .andDo(print());
@@ -133,7 +119,7 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$.firstName").value("Anna"))
                 .andExpect(jsonPath("$.lastName").value("Vitoria"))
                 .andExpect(jsonPath("$.age").value("24"))
-                .andExpect(content().json(ADDRESS_JSON))
+                .andExpect(content().json("{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}"))
                 .andExpect(jsonPath("$.phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
                 .andExpect(jsonPath("$.symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
                 .andDo(print());
@@ -146,15 +132,7 @@ class PatientControllerTest {
     @DisplayName("Should return patient when calling savePatient with valid request")
     void shouldReturnPatient_WhenCallingSavePatientWithValidRequest() throws Exception {
         // Arrange
-        var request = PatientRequestBuilder
-                .create()
-                .withFirstName("Anna")
-                .withLastName("Vitoria")
-                .withBirthDate(LocalDate.of(1998, 4, 28))
-                .withAddress(new Address("Rua do Magnolia", "Sao Paulo", "Sao Paulo", "24804399"))
-                .withPhone(List.of("(16) 92633-7053", "(54) 93858-3963"))
-                .withSymptom(List.of("Náusea", "Formigamento nos pés"))
-                .build();
+        var request = buildPatientRequest();
 
         // Mocking the service method
         given(service.savePatient(request)).willReturn(response);
@@ -176,16 +154,7 @@ class PatientControllerTest {
     void shouldReturnUpdatedPatient_WhenCallingUpdatePatientWithValidData() throws Exception {
         // Arrange
         var id = "5fa4a5c3a2e74c2b6c8f50a1";
-
-        var request = PatientRequestBuilder
-                .create()
-                .withFirstName("Anna")
-                .withLastName("Vitoria")
-                .withBirthDate(LocalDate.of(1998, 4, 28))
-                .withAddress(new Address("Rua do Magnolia", "Sao Paulo", "Sao Paulo", "24804399"))
-                .withPhone(List.of("(16) 92633-7053", "(54) 93858-3963"))
-                .withSymptom(List.of("Náusea", "Formigamento nos pés"))
-                .build();
+        var request = buildPatientRequest();
 
         given(service.updatePatient(any(ObjectId.class), any(PatientRequest.class))).willReturn(response);
 
@@ -199,7 +168,7 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$.firstName").value("Anna"))
                 .andExpect(jsonPath("$.lastName").value("Vitoria"))
                 .andExpect(jsonPath("$.age").value("24"))
-                .andExpect(content().json(ADDRESS_JSON))
+                .andExpect(content().json("{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}"))
                 .andExpect(jsonPath("$.phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
                 .andExpect(jsonPath("$.symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
                 .andDo(print());

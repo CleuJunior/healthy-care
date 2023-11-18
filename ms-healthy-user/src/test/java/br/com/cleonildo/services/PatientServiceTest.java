@@ -5,8 +5,8 @@ import br.com.cleonildo.dto.PatientResponse;
 import br.com.cleonildo.entities.Address;
 import br.com.cleonildo.entities.Patient;
 import br.com.cleonildo.repositories.PatientRepository;
-import databuilder.PatientBuilder;
-import databuilder.PatientRequestBuilder;
+import factory.PatientFactory;
+import factory.PatientRequestFactory;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ class PatientServiceTest {
     @InjectMocks
     private PatientService service;
     private final Address address = new Address("Rua do Magnolia", "Sao Paulo", "Sao Paulo", "24804399");
-    private final ObjectId objectId = new ObjectId();
+    private final ObjectId objectId = new ObjectId("5fa4a5c3a2e74c2b6c8f50a1");
     private static final String FIRST_NAME = "Anna";
     private static final String LAST_NAME = "Vitoria";
     private static final LocalDate BIRTH_DATE = LocalDate.of(1998, 4, 28);
@@ -48,16 +48,7 @@ class PatientServiceTest {
 
     @BeforeEach
     void setup() {
-        this.patient = PatientBuilder
-                .create()
-                .withId(objectId)
-                .withFirstName(FIRST_NAME)
-                .withLastName(LAST_NAME)
-                .withBirthDate(BIRTH_DATE)
-                .withAddress(address)
-                .withPhone(PHONES)
-                .withSymptom(SYMPTOMS)
-                .build();
+        this.patient = PatientFactory.buildPatient();
     }
 
     @Test
@@ -87,7 +78,7 @@ class PatientServiceTest {
     void shouldReturnPatient_WhenCallingFindByFirstNameAndLastName() {
         given(repository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(anyString(), anyString())).willReturn(Optional.of(patient));
 
-        var patientResponse = this.service.findByFirstNameAndLastName(FIRST_NAME, LAST_NAME);
+        var patientResponse = this.service.findByFirstNameAndLastName("Anna", "Vitoria");
 
         this.commonAssertions(patientResponse);
     }
@@ -120,16 +111,7 @@ class PatientServiceTest {
         given(repository.save(any(Patient.class))).willReturn(patient);
 
 
-        var request = PatientRequestBuilder
-                .create()
-                .withFirstName(updateFirstName)
-                .withLastName(updateLastName)
-                .withBirthDate(updateBirthdate)
-                .withAddress(addressUpdate)
-                .withPhone(phones)
-                .withSymptom(symptoms)
-                .build();
-
+        var request = new PatientRequest(updateFirstName, updateLastName, updateBirthdate, addressUpdate, phones, symptoms);
 
         var response = this.service.updatePatient(objectId, request);
 
@@ -158,8 +140,8 @@ class PatientServiceTest {
         int age = Period.between(patient.getBirthdate(), LocalDate.now()).getYears();
 
         assertThat(response.id(), is(objectId));
-        assertThat(response.firstName(), is(FIRST_NAME));
-        assertThat(response.lastName(), is(LAST_NAME));
+        assertThat(response.firstName(), is("Anna"));
+        assertThat(response.lastName(), is("Vitoria"));
         assertThat(response.age(), is(age));
     }
 
