@@ -3,16 +3,14 @@ package br.com.cleonildo.dto;
 import br.com.cleonildo.entities.Address;
 import br.com.cleonildo.entities.Patient;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Collection;
-import java.util.List;
 
 public record PatientResponse(
-        @Id ObjectId id,
+        ObjectId id,
         @Field("first_name") String firstName,
         @Field("last_name") String lastName,
         Integer age,

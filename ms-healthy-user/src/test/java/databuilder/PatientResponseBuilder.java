@@ -9,7 +9,6 @@ import org.bson.types.ObjectId;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -17,8 +16,8 @@ public class PatientResponseBuilder {
     private static final String FIRST_NAME = "Anna";
     private static final String LAST_NAME = "Vitoria";
     private static final LocalDate BIRTH_DATE = LocalDate.of(1998, 4, 28);
-    private static final List<String> PHONES = Collections.singletonList("23 1288293091");
-    private static final List<String> SYMPTOMS = Collections.singletonList("Náusea");
+    private static final List<String> PHONES = List.of("(16) 92633-7053", "(54) 93858-3963");
+    private static final List<String> SYMPTOMS = List.of("Náusea", "Formigamento nos pés");
     private ObjectId id;
     private String firstName;
     private String lastName;
@@ -32,7 +31,7 @@ public class PatientResponseBuilder {
     }
 
     public PatientResponseBuilder withId() {
-        this.id = new ObjectId();
+        this.id = new ObjectId("5fa4a5c3a2e74c2b6c8f50a1");
         return this;
     }
 
@@ -48,7 +47,7 @@ public class PatientResponseBuilder {
 
 
     public PatientResponseBuilder withAge() {
-        this.age = Period.between(BIRTH_DATE, LocalDate.now()).getYears();
+        this.age = Period.between(BIRTH_DATE, LocalDate.of(2023, 3, 12)).getYears();
         return this;
     }
 
