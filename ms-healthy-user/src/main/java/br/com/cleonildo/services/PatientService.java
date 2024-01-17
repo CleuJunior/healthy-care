@@ -49,7 +49,7 @@ public class PatientService {
     public PatientResponse savePatient(PatientRequest request) {
         var patient = new Patient(request);
 
-        var patientResponse =  this.repository.save(patient);
+        var patientResponse = this.repository.save(patient);
 
         logger.info("Patient saved: {}", patientResponse);
         return new PatientResponse(patientResponse);

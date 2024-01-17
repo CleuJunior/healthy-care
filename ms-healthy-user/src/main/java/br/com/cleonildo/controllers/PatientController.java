@@ -3,6 +3,7 @@ package br.com.cleonildo.controllers;
 import br.com.cleonildo.dto.PatientRequest;
 import br.com.cleonildo.dto.PatientResponse;
 import br.com.cleonildo.services.PatientService;
+import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -47,7 +48,7 @@ public class PatientController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> savePatient(@RequestBody PatientRequest request) {
+    public ResponseEntity<Void> savePatient(@RequestBody @Valid PatientRequest request) {
         PatientResponse response = this.service.savePatient(request);
 
         URI uri = ServletUriComponentsBuilder
@@ -60,7 +61,7 @@ public class PatientController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<PatientResponse> updatePatient(@PathVariable String id, @RequestBody PatientRequest request) {
+    public ResponseEntity<PatientResponse> updatePatient(@PathVariable String id, @RequestBody @Valid  PatientRequest request) {
         var response = this.service.updatePatient(new ObjectId(id), request);
         return ResponseEntity.ok().body(response);
     }
