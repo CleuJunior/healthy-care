@@ -12,6 +12,6 @@ public record PatientRequest(
         @Field("last_name") String lastName,
         @JsonFormat(pattern = "dd-MM-yyyy") LocalDate birthdate,
         Address address,
-        List<String> phones,
-        List<String> symptoms
+        String phone,
+        String symptoms
 ) {}

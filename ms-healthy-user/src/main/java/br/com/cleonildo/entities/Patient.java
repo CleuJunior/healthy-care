@@ -1,7 +1,9 @@
 package br.com.cleonildo.entities;
 
+import br.com.cleonildo.dto.PatientRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +16,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Document
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter @Setter
 public class Patient {
 
     @Id
@@ -28,17 +30,27 @@ public class Patient {
     private String lastName;
     private LocalDate birthdate;
     private Address address;
-    private List<String> phones;
-    private List<String> symptoms;
+    private String phone;
+    private String symptoms;
 
-    public Patient(String firstName, String lastName, LocalDate birthdate, Address address, List<String> phones,
-                   List<String> symptoms) {
+    public Patient(String firstName, String lastName, LocalDate birthdate, Address address, String phone, String symptoms) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthdate = birthdate;
         this.address = address;
-        this.phones = phones;
+        this.phone = phone;
         this.symptoms = symptoms;
+    }
+
+    public Patient(PatientRequest request) {
+        this(
+                request.firstName(),
+                request.lastName(),
+                request.birthdate(),
+                request.address(),
+                request.phone(),
+                request.symptoms()
+        );
     }
 
 }

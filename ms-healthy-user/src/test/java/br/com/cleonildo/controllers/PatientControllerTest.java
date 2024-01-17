@@ -17,10 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static factory.PatientRequestFactory.buildPatientRequest;
-import static factory.PatientResponseBuilder.buildPatientResponse;
+import static factory.PatientEntitiesFactory.buildPatientRequest;
+import static factory.PatientEntitiesFactory.buildPatientResponse;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
@@ -64,10 +63,10 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$[0].id.date").value("2020-11-06T01:24:19.000+00:00"))
                 .andExpect(jsonPath("$[0].firstName").value("Anna"))
                 .andExpect(jsonPath("$[0].lastName").value("Vitoria"))
-                .andExpect(jsonPath("$[0].age").value("24"))
+                .andExpect(jsonPath("$[0].age").value("25"))
                 .andExpect(content().json("[{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}]"))
-                .andExpect(jsonPath("$[0].phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
-                .andExpect(jsonPath("$[0].symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
+                .andExpect(jsonPath("$[0].phone").value("(16) 92633-7053"))
+                .andExpect(jsonPath("$[0].symptoms").value("Náusea e formigamento nos pés"))
                 .andDo(print());
 
         verify(service).findAllPatient();
@@ -89,10 +88,10 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$.id.date").value("2020-11-06T01:24:19.000+00:00"))
                 .andExpect(jsonPath("$.firstName").value("Anna"))
                 .andExpect(jsonPath("$.lastName").value("Vitoria"))
-                .andExpect(jsonPath("$.age").value("24"))
+                .andExpect(jsonPath("$.age").value("25"))
                 .andExpect(content().json("{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}"))
-                .andExpect(jsonPath("$.phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
-                .andExpect(jsonPath("$.symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
+                .andExpect(jsonPath("$.phone").value("(16) 92633-7053"))
+                .andExpect(jsonPath("$.symptoms").value("Náusea e formigamento nos pés"))
                 .andDo(print());
 
         verify(service).findById(any(ObjectId.class));
@@ -109,7 +108,7 @@ class PatientControllerTest {
         given(service.findByFirstNameAndLastName(firstName, lastName)).willReturn(response);
 
         // Act and Assert
-        this.mockMvc.perform(get(URL + "/search")
+        this.mockMvc.perform(get(URL)
                         .param("firstName", firstName)
                         .param("lastName", lastName)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -118,10 +117,10 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$.id.date").value("2020-11-06T01:24:19.000+00:00"))
                 .andExpect(jsonPath("$.firstName").value("Anna"))
                 .andExpect(jsonPath("$.lastName").value("Vitoria"))
-                .andExpect(jsonPath("$.age").value("24"))
+                .andExpect(jsonPath("$.age").value("25"))
                 .andExpect(content().json("{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}"))
-                .andExpect(jsonPath("$.phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
-                .andExpect(jsonPath("$.symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
+                .andExpect(jsonPath("$.phone").value("(16) 92633-7053"))
+                .andExpect(jsonPath("$.symptoms").value("Náusea e formigamento nos pés"))
                 .andDo(print());
 
         verify(service).findByFirstNameAndLastName(firstName, lastName);
@@ -167,10 +166,10 @@ class PatientControllerTest {
                 .andExpect(jsonPath("$.id.date").value("2020-11-06T01:24:19.000+00:00"))
                 .andExpect(jsonPath("$.firstName").value("Anna"))
                 .andExpect(jsonPath("$.lastName").value("Vitoria"))
-                .andExpect(jsonPath("$.age").value("24"))
+                .andExpect(jsonPath("$.age").value("25"))
                 .andExpect(content().json("{\"address\":{\"postal_code\":\"24804399\",\"street\":\"Rua do Magnolia\",\"city\":\"Sao Paulo\",\"state\":\"Sao Paulo\"}}"))
-                .andExpect(jsonPath("$.phones", containsInAnyOrder("(16) 92633-7053", "(54) 93858-3963")))
-                .andExpect(jsonPath("$.symptoms", containsInAnyOrder("Náusea", "Formigamento nos pés")))
+                .andExpect(jsonPath("$.phone").value("(16) 92633-7053"))
+                .andExpect(jsonPath("$.symptoms").value("Náusea e formigamento nos pés"))
                 .andDo(print());
 
         verify(service).updatePatient(any(ObjectId.class), any(PatientRequest.class));

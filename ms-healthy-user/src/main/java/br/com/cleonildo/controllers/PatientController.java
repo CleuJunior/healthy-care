@@ -38,7 +38,7 @@ public class PatientController {
         return ResponseEntity.ok().body(this.service.findById(new ObjectId(id)));
     }
 
-    @GetMapping(value = "/search")
+    @GetMapping(params = {"firstName", "lastName"})
     public ResponseEntity<PatientResponse> getPatientByFirstAndLastName(
             @RequestParam String firstName,
             @RequestParam String lastName

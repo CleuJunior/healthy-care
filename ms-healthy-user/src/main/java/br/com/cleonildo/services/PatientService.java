@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PatientService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatientService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
     private final PatientRepository repository;
 
     public PatientService(PatientRepository repository) {
@@ -22,45 +23,35 @@ public class PatientService {
     }
 
     public List<PatientResponse> findAllPatient() {
-        LOGGER.info("List returned successfully");
-        return this.repository
-                .findAll()
-                .stream()
+        logger.info("List returned successfully");
+
+        return this.repository.findAll().stream()
+                .filter(Objects::nonNull)
                 .map(PatientResponse::new)
                 .toList();
     }
 
     public PatientResponse findById(ObjectId id) {
-        var patientOptional = this.repository.findById(id).get();
+        var patient = this.repository.findById(id).get();
 
-        LOGGER.info("Patient found");
-
-        return new PatientResponse(patientOptional);
-
+        logger.info("Patient found: {}", patient);
+        return new PatientResponse(patient);
     }
 
     public PatientResponse findByFirstNameAndLastName(String firsName, String lastName) {
-        var patientOptional = this.repository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firsName, lastName).get();
+        var patient = this.repository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(firsName, lastName).get();
 
-        LOGGER.info("Patient found");
-
-        return new PatientResponse(patientOptional);
+        logger.info("Patient found: {}", patient);
+        return new PatientResponse(patient);
     }
 
     @Transactional
     public PatientResponse savePatient(PatientRequest request) {
-        var patient = Patient
-                .builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .birthdate(request.birthdate())
-                .address(request.address())
-                .phones(request.phones())
-                .symptoms(request.symptoms())
-                .build();
+        var patient = new Patient(request);
 
         var patientResponse =  this.repository.save(patient);
 
+        logger.info("Patient saved: {}", patientResponse);
         return new PatientResponse(patientResponse);
     }
 
@@ -68,16 +59,20 @@ public class PatientService {
     public PatientResponse updatePatient(ObjectId objectId, PatientRequest request) {
         var patient = this.repository.findById(objectId).get();
 
+        this.updatePatientFromRequest(patient, request);
+        this.repository.save(patient);
+
+        logger.info("Patient updated: {}", patient);
+        return new PatientResponse(patient);
+    }
+
+    private void updatePatientFromRequest(Patient patient, PatientRequest request) {
         patient.setFirstName(request.firstName());
         patient.setLastName(request.lastName());
         patient.setBirthdate(request.birthdate());
         patient.setAddress(request.address());
-        patient.setPhones(request.phones());
+        patient.setPhone(request.phone());
         patient.setSymptoms(request.symptoms());
-
-        this.repository.save(patient);
-
-        return new PatientResponse(patient);
     }
 
     @Transactional
@@ -85,6 +80,6 @@ public class PatientService {
         var patient = this.repository.findById(objectId).get();
 
         this.repository.delete(patient);
+        logger.info("Patient deleted: {}", patient);
     }
-
 }
